@@ -50,7 +50,7 @@
 			<scope>test</scope>
 		</dependency>
         <dependency>
-            <groupId>com.javatechie</groupId>
+            <groupId>com.cqrs</groupId>
             <artifactId>common-dtos</artifactId>
             <version>0.0.1-SNAPSHOT</version>
             <scope>compile</scope>

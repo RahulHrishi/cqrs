@@ -1,2 +1,2 @@
 # kafka-consumer
-Apache Kafka Consumer Example using SpringBoot
+Apache Kafka Consumer cqrs using SpringBoot

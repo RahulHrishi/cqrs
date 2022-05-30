@@ -14,7 +14,7 @@
 		<version>2.5.4</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.javatechie</groupId>
+	<groupId>com.cqrs</groupId>
 	<artifactId>saga-choreography-pattern</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>saga-choreography-pattern</name>
