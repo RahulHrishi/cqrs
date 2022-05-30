@@ -2,7 +2,6 @@ package com.commons.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 
 import java.util.Date;
@@ -10,7 +9,6 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 public class Product {
-    @Id
     private Integer productId;
     private Integer startPrice;
     private String productName;
