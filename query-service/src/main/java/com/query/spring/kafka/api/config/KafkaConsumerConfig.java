@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.commons.dto.Buyer;
+import com.commons.dto.Constants;
 import com.commons.dto.Seller;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
@@ -26,7 +27,7 @@ public class KafkaConsumerConfig {
 		configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
 		configs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 		configs.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-		configs.put(ConsumerConfig.GROUP_ID_CONFIG, "SELL");
+		configs.put(ConsumerConfig.GROUP_ID_CONFIG, Constants.GRP_ID_SELL);
 		return new DefaultKafkaConsumerFactory<>(configs, new StringDeserializer(), new JsonDeserializer<>(Seller.class));
 	}
 
@@ -43,7 +44,7 @@ public class KafkaConsumerConfig {
 		configs.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
 		configs.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 		configs.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-		configs.put(ConsumerConfig.GROUP_ID_CONFIG, "BUY");
+		configs.put(ConsumerConfig.GROUP_ID_CONFIG, Constants.GRP_ID_BUY);
 		return new DefaultKafkaConsumerFactory<>(configs, new StringDeserializer(), new JsonDeserializer<>(Buyer.class));
 	}
 
