@@ -2,6 +2,7 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
@@ -9,6 +10,7 @@
         <module name="common-dtos" />
         <module name="order-service" />
         <module name="payment-service" />
+        <module name="common-gateway" />
         <module name="query-service" />
         <module name="command-service" />
       </profile>
@@ -18,6 +20,7 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="command-service" options="-parameters" />
       <module name="common-dtos" options="-parameters" />
+      <module name="common-gateway" options="-parameters" />
       <module name="order-service" options="-parameters" />
       <module name="payment-service" options="-parameters" />
       <module name="query-service" options="-parameters" />
