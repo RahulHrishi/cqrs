@@ -24,3 +24,7 @@ mongodb://localhost:27017
 
 #swagger
 http://localhost:9091/swagger-ui.html
+
+COMMON-GATEWAY
+http://localhost:8080/cqrs-api/do/saveProduct
+http://localhost:8080/query-service/?productId=1
