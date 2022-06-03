@@ -1,10 +1,10 @@
 package com.query.spring.kafka.api.controller;
 
-import com.commons.Excption.AuctionException;
 import com.commons.dto.Buyer;
 import com.commons.dto.Constants;
 import com.commons.dto.MappedProductModel;
 import com.commons.dto.Seller;
+import com.query.spring.kafka.api.Excption.AuctionException;
 import com.query.spring.kafka.api.Service.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.List;
 
 @RestController
 @RequestMapping("do")

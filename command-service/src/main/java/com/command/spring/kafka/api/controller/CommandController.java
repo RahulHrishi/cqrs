@@ -5,6 +5,7 @@ import com.command.spring.kafka.api.Service.ServiceImpl;
 import com.command.spring.kafka.api.validation.CommandValidation;
 import com.commons.Excption.ValidationException;
 import com.commons.dto.Buyer;
+import com.commons.dto.MappedProductModel;
 import com.commons.dto.Seller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
