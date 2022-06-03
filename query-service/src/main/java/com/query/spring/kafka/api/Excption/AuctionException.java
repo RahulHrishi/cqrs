@@ -1,7 +1,7 @@
-package com.commons.Excption;
+package com.query.spring.kafka.api.Excption;
 
 
-public class AuctionException extends Exception {
+public class AuctionException extends RuntimeException {
     public AuctionException() {
         super();
     }
