@@ -11,11 +11,12 @@ import org.springframework.data.annotation.Id;
 public class UserInfo {
 
     private Integer id;
-    private String name;
-    private Integer phone;
+    private String first_name;
+    private String last_name;
+    private Long phone;
     private String  email;
     private String  address;
     private String  city;
     private String  state;
-    private Integer pin;
+    private Long pin;
 }

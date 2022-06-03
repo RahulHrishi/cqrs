@@ -11,4 +11,9 @@ public class ExceptionHandlerControllerAdvice {
     public ResponseEntity<Object> exception(AuctionException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(value = ValidationException.class)
+    public ResponseEntity<Object> exception(ValidationException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }
