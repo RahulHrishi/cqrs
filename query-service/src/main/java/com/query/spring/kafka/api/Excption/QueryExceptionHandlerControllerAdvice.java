@@ -7,9 +7,9 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-public class ExceptionHandlerControllerAdvice {
-    @ExceptionHandler(value = AuctionException.class)
-    public ResponseEntity<Object> exception(AuctionException exception) {
+public class QueryExceptionHandlerControllerAdvice {
+    @ExceptionHandler(value = QueryException.class)
+    public ResponseEntity<Object> exception(QueryException exception) {
         return new ResponseEntity<>("custom exception message", HttpStatus.BAD_GATEWAY);
     }
 

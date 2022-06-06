@@ -9,6 +9,7 @@ import org.springframework.web.client.RestTemplate;
 
 public class KafkaPublisherApplication {
     public static void main(String[] args) {
+        //System.setProperty("spring.profiles.active","command");
         SpringApplication.run(KafkaPublisherApplication.class, args);
     }
 

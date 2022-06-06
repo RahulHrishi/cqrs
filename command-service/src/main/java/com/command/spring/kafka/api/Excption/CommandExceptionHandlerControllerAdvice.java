@@ -7,15 +7,15 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
-public class ExceptionHandlerControllerAdvice {
+public class CommandExceptionHandlerControllerAdvice {
 
-    @ExceptionHandler(value = AuctionException.class)
-    public ResponseEntity<Object> exception(AuctionException exception) {
-        return new ResponseEntity<>("custom exception message", HttpStatus.BAD_GATEWAY);
+    @ExceptionHandler(value = CommandException.class)
+    public ResponseEntity<Object> exception(CommandException exception) {
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(value = ValidationException.class)
     public ResponseEntity<Object> exception(ValidationException exception) {
-        return new ResponseEntity<>("custom exception message", HttpStatus.BAD_GATEWAY);
+        return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
