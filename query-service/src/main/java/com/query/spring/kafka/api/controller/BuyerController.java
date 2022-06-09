@@ -35,4 +35,5 @@ public class BuyerController {
     public MappedProductModel getProducts(@RequestParam Integer productId) throws QueryException {
         return serviceImpl.findByProduct(productId);
     }
+
 }

@@ -31,6 +31,11 @@ public class SellerController {
         return buyer;
     }
 
+    @GetMapping("/getProduct")
+    public Seller getProductDetails (@RequestParam Integer productId) throws QueryException {
+        return serviceImpl.getProductDetails(productId);
+    }
+
     @KafkaListener(groupId = Constants.GRP_ID_SELL, topics = Constants.SELL_D, containerFactory = "kafkaListenerContainerFactory")
     public void delete(Seller seller) throws QueryException {
         serviceImpl.delete(seller);

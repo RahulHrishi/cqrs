@@ -33,6 +33,10 @@ public class ServiceImpl {
         return obj;
     }
 
+    public Seller getProductDetails (Integer productId) throws QueryException {
+        return sellerRepository.findByProductId(productId);
+    }
+
     public void delete(Seller seller) throws QueryException{
         sellerRepository.delete(seller);
     }

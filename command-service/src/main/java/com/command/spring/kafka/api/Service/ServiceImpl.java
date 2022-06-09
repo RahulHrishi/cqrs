@@ -5,6 +5,9 @@ import com.command.spring.kafka.api.config.Actuator;
 import com.command.spring.kafka.api.config.SequenceGeneratorService;
 import com.command.spring.kafka.api.repository.BuyerRepository;
 import com.command.spring.kafka.api.repository.SellerRepository;
+import com.command.spring.kafka.api.rpc.ConnectQueryService;
+import com.command.spring.kafka.api.validation.CommandValidation;
+import com.commons.Excption.ValidationException;
 import com.commons.dto.Buyer;
 import com.commons.dto.Constants;
 import com.commons.dto.Seller;
@@ -13,7 +16,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.List;
 
 @Service
 public class ServiceImpl {
@@ -27,7 +30,13 @@ public class ServiceImpl {
     private SellerRepository sellerRepository;
 
     @Autowired
+    private ConnectQueryService connectionService;
+
+    @Autowired
     private SequenceGeneratorService sequenceGeneratorService;
+
+    @Autowired
+    private CommandValidation validation;
 
     @Autowired
     private Actuator actuator;
@@ -51,11 +60,34 @@ public class ServiceImpl {
         buyerRepository.save(buyer);
         template.send(Constants.BID_T, buyer);
     }
+
+    @Transactional
+    public void updateBuyer(Integer productId, String emailId, Integer newBidAmount) throws CommandException, ValidationException {
+        actuator.checkHealth();
+        boolean getFlag = false;
+        List<Buyer> buyerList = connectionService.findBuyerByProductId(productId);
+        Buyer buyer = new Buyer();
+        for(Buyer buy: buyerList) {
+            if(buy.getInfo().getEmail().equals(emailId)) {
+                buyer = buy;
+                buyer.setBidAmount(newBidAmount);
+                buyer.getInfo().setEmail(emailId);
+                getFlag = true;
+            }
+        }
+        if(getFlag) {
+            if (validation.validateBidProduct(buyer))
+                buyerRepository.save(buyer);
+        } else {
+            throw new ValidationException("No such Buyer with Email Id");
+        }
+        template.send(Constants.BID_T, buyer);
+    }
     @Transactional
     public void delete(Integer productId) throws CommandException {
         actuator.checkHealth();
-        Optional<Seller> seller = sellerRepository.findByProductId(productId);
-        sellerRepository.delete(seller.get());
-        template.send(Constants.SELL_D, seller.get());
+        Seller seller = connectionService.findSellerByProductId(productId);
+        sellerRepository.delete(seller);
+        template.send(Constants.SELL_D, seller);
     }
 }
