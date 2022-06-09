@@ -66,7 +66,7 @@ public class ServiceImpl {
                 buyerRepository.save(buyer);
                 template.send(Constants.BID_T, buyer);
             }else{
-                throw new ValidationException("BID was placed earlier the user");
+                throw new ValidationException("BID was already placed by the user");
             }
         }else{
             throw new ValidationException("BID was expired");
