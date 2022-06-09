@@ -1,6 +1,6 @@
 package com.commons.Excption;
 
-public class ValidationException  extends Exception {
+public class ValidationException  extends RuntimeException {
 
     public ValidationException () {
         super();

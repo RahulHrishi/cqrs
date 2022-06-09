@@ -11,12 +11,14 @@ import com.commons.Excption.ValidationException;
 import com.commons.dto.Buyer;
 import com.commons.dto.Constants;
 import com.commons.dto.Seller;
+import com.commons.dto.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class ServiceImpl {
@@ -55,39 +57,47 @@ public class ServiceImpl {
     @Transactional
     public void saveBuyer(Buyer buyer) throws CommandException {
         actuator.checkHealth();
-        buyer.setId((int) sequenceGeneratorService.generateSequence(Buyer.SEQUENCE_NAME));
-        buyer.getInfo().setId((int) sequenceGeneratorService.generateSequence(Buyer.SEQUENCE_NAME));
-        buyerRepository.save(buyer);
-        template.send(Constants.BID_T, buyer);
+        Optional<Seller> seller=connectionService.findSellerByProductId(buyer.getProductId());
+        Seller optSeller=seller.orElseThrow(()-> new ValidationException("Product not Found"));
+        if(optSeller.getProduct().getEndDate().compareTo(new Date())>0){
+            if(!connectionService.findBuyerByProductId(buyer.getProductId(),buyer.getInfo().getEmail()).isPresent()) {
+                buyer.setId((int) sequenceGeneratorService.generateSequence(Buyer.SEQUENCE_NAME));
+                buyer.getInfo().setId((int) sequenceGeneratorService.generateSequence(Buyer.SEQUENCE_NAME));
+                buyerRepository.save(buyer);
+                template.send(Constants.BID_T, buyer);
+            }else{
+                throw new ValidationException("BID was placed earlier the user");
+            }
+        }else{
+            throw new ValidationException("BID was expired");
+        }
     }
 
     @Transactional
     public void updateBuyer(Integer productId, String emailId, Integer newBidAmount) throws CommandException, ValidationException {
         actuator.checkHealth();
-        boolean getFlag = false;
-        List<Buyer> buyerList = connectionService.findBuyerByProductId(productId);
-        Buyer buyer = new Buyer();
-        for(Buyer buy: buyerList) {
-            if(buy.getInfo().getEmail().equals(emailId)) {
-                buyer = buy;
-                buyer.setBidAmount(newBidAmount);
-                buyer.getInfo().setEmail(emailId);
-                getFlag = true;
-            }
-        }
-        if(getFlag) {
-            if (validation.validateBidProduct(buyer))
-                buyerRepository.save(buyer);
-        } else {
-            throw new ValidationException("No such Buyer with Email Id");
-        }
+        Optional<Buyer> optBuyer = connectionService.findBuyerByProductId(productId, emailId);
+        Buyer buyer=optBuyer.orElseThrow(() -> new ValidationException("No such Buyer with Email Id"));
+        buyer.setBidAmount(newBidAmount);
+        buyer.getInfo().setEmail(emailId);
+        buyerRepository.save(buyer);
         template.send(Constants.BID_T, buyer);
     }
     @Transactional
     public void delete(Integer productId) throws CommandException {
         actuator.checkHealth();
-        Seller seller = connectionService.findSellerByProductId(productId);
+        Optional<Seller> optSeller = connectionService.findSellerByProductId(productId);
+        Seller seller=optSeller.orElseThrow(()-> new ValidationException("Product not found"));
         sellerRepository.delete(seller);
         template.send(Constants.SELL_D, seller);
+    }
+
+    public Set<Index> getAllProduct() throws CommandException {
+        actuator.checkHealth();
+        Set<Index> indexList = new HashSet<>();
+        sellerRepository.findAll().stream().map(bean -> bean.getProduct()).collect(Collectors.toList())
+                .forEach(prod -> { indexList.add(new Index(prod.getProductId(), prod.getProductName()));
+        });
+        return indexList;
     }
 }

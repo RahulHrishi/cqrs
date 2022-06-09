@@ -4,9 +4,11 @@ import com.command.spring.kafka.api.Excption.CommandException;
 import com.command.spring.kafka.api.Service.ServiceImpl;
 import com.command.spring.kafka.api.validation.CommandValidation;
 import com.commons.Excption.ValidationException;
+import com.commons.dto.Index;
 import com.commons.dto.Seller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import java.util.Set;
 
 @RestController
 @RequestMapping("e-auction/api/v1/seller")
@@ -29,5 +31,10 @@ public class SellerController {
     public String delete(@RequestParam Integer productId) throws CommandException {
         service.delete(productId);
         return "Product deleted";
+    }
+
+    @GetMapping("/getAllProduct")
+    public Set<Index> getAllProduct() throws CommandException {
+        return service.getAllProduct();
     }
 }

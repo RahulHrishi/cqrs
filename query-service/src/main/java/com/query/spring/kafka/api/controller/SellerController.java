@@ -7,11 +7,14 @@ import com.commons.dto.Seller;
 import com.query.spring.kafka.api.Excption.QueryException;
 import com.query.spring.kafka.api.Service.ServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.repository.Query;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("e-auction/api/v1/seller")
@@ -31,9 +34,9 @@ public class SellerController {
         return buyer;
     }
 
-    @GetMapping("/getProduct")
-    public Seller getProductDetails (@RequestParam Integer productId) throws QueryException {
-        return serviceImpl.getProductDetails(productId);
+    @GetMapping("/getSellerByProductId")
+    public Optional<Seller> getSellerByProductId (@RequestParam Integer productId) throws QueryException {
+        return serviceImpl.getSellerByProductId(productId);
     }
 
     @KafkaListener(groupId = Constants.GRP_ID_SELL, topics = Constants.SELL_D, containerFactory = "kafkaListenerContainerFactory")
@@ -42,8 +45,8 @@ public class SellerController {
     }
 
     @GetMapping("/show-bids")
-    public MappedProductModel getProducts(@RequestParam Integer productId) throws QueryException {
-        return serviceImpl.findByProduct(productId);
+    public Optional<MappedProductModel> getProducts(@RequestParam Integer productId) throws QueryException {
+        return serviceImpl.findSellerWithBids(productId);
     }
 
 }

@@ -9,5 +9,6 @@ import java.util.List;
 
 public interface BuyerRepository extends MongoRepository<Buyer, Integer>{
     List<Buyer> findByProductId(Integer productId);
+
 }
 

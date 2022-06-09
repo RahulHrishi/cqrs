@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Optional;
+
 @RestController
 @RequestMapping("e-auction/api/v1/buyer")
 public class BuyerController {
@@ -20,20 +22,23 @@ public class BuyerController {
     private ServiceImpl serviceImpl;
 
     @KafkaListener(groupId = Constants.GRP_ID_SELL, topics = Constants.SELL_T, containerFactory = "kafkaListenerContainerFactory")
-    public Seller consumeSeller(Seller seller) throws QueryException {
+    public void consumeSeller(Seller seller) throws QueryException {
         serviceImpl.consumeSeller(seller);
-        return seller;
     }
 
     @KafkaListener(groupId = Constants.GRP_ID_BUY, topics = Constants.BID_T, containerFactory = "kafkaListenerContainerFactoryBuyer")
-    public Buyer consumeBidder(Buyer buyer) throws QueryException {
+    public void consumeBidder(Buyer buyer) throws QueryException {
         serviceImpl.consumeBidder(buyer);
-        return buyer;
     }
 
-    @GetMapping("/getProducts")
-    public MappedProductModel getProducts(@RequestParam Integer productId) throws QueryException {
-        return serviceImpl.findByProduct(productId);
+    @GetMapping("/findSellerWithBids")
+    public Optional<MappedProductModel> findSellerWithBids(@RequestParam Integer productId) throws QueryException {
+        return serviceImpl.findSellerWithBids(productId);
+    }
+
+    @GetMapping("/getBuyerByIdAndEmail")
+    public Optional<Buyer> getBuyerByIdAndEmail(@RequestParam Integer productId, @RequestParam String email) throws QueryException {
+        return serviceImpl.getBuyerByIdAndEmail(productId, email);
     }
 
 }

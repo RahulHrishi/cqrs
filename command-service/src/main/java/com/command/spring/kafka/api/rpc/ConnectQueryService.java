@@ -14,6 +14,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ConnectQueryService {
@@ -27,26 +28,19 @@ public class ConnectQueryService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public Seller findSellerByProductId(Integer productId) {
-
-        String getProductUrl = sellerUrl+"getProduct/?productId="+productId;
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-       Seller seller = restTemplate.exchange(getProductUrl, HttpMethod.GET, entity, Seller.class).getBody();
-
-        return seller;
+    public Optional<Seller> findSellerByProductId(Integer productId) {
+        String getProductUrl = sellerUrl + "getSellerByProductId/?productId=" + productId;
+        return Optional.ofNullable(restTemplate.exchange(getProductUrl, HttpMethod.GET, getHttpHeaders(), Seller.class).getBody());
     }
 
-    public List<Buyer> findBuyerByProductId(Integer productId) {
+    public Optional<Buyer> findBuyerByProductId(Integer productId, String email) {
+        String getProductUrl = buyerUrl + "getBuyerByIdAndEmail/?productId=" + productId +"/?email="+email;
+        return Optional.ofNullable(restTemplate.exchange(getProductUrl, HttpMethod.GET, getHttpHeaders(), Buyer.class).getBody());
+    }
 
-        String getProductUrl = buyerUrl+"getProducts/?productId="+productId;
+    private HttpEntity<String> getHttpHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        MappedProductModel model = restTemplate.exchange(getProductUrl, HttpMethod.GET, entity, MappedProductModel.class).getBody();
-        List<Buyer> buyer = model.getBuyer();
-
-        return buyer;
+        return new HttpEntity<>(headers);
     }
 }
