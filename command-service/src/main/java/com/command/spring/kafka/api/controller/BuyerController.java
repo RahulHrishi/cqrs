@@ -8,7 +8,7 @@ import com.commons.dto.Buyer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestParam;
-
+import com.commons.dto.Constants;
 @RestController
 @RequestMapping("e-auction/api/v1/buyer")
 public class BuyerController {
@@ -23,13 +23,13 @@ public class BuyerController {
     @PostMapping("/place-bid")
     public String placeBid(@RequestBody Buyer buyer) throws CommandException, ValidationException {
         if (validation.validateBidProduct(buyer))
-        service.saveBuyer(buyer);
-        return "bidder data published";
+            service.saveBuyer(buyer);
+        return Constants.BIDDER_PUBLISHED;
     }
 
     @PostMapping("/update-bid/{productId}/{emailId}/{newBidAmount}")
     public String updateBid(@RequestParam("productId") Integer productId, @RequestParam("emailId") String emailId, @RequestParam("newBidAmount") Integer newBidAmount) throws CommandException, ValidationException {
         service.updateBuyer(productId, emailId, newBidAmount);
-        return "bidder data published";
+        return Constants.BIDDER_UPDATED;
     }
 }

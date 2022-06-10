@@ -31,7 +31,7 @@ public class ServiceImpl {
     public Optional<MappedProductModel> findSellerWithBids(Integer productId) throws QueryException {
         MappedProductModel obj = new MappedProductModel();
         obj.setSeller(sellerRepository.findByProductId(productId));
-        obj.setBuyer(buyerRepository.findByProductId(productId));
+        obj.setBuyer(buyerRepository.findByProductIdOrderByBidAmountDesc(productId));
         return Optional.of(obj);
     }
 
@@ -44,7 +44,7 @@ public class ServiceImpl {
     }
 
     public Optional<Buyer> getBuyerByIdAndEmail(Integer productId, String email) throws QueryException {
-        return buyerRepository.findByProductId(productId).stream().filter(bean -> bean.getInfo().getEmail().equals(email)).findFirst();
+        return buyerRepository.findByProductIdOrderByBidAmountDesc(productId).stream().filter(bean -> bean.getInfo().getEmail().equals(email)).findFirst();
     }
 
 }

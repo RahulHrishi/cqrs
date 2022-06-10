@@ -4,6 +4,7 @@ import com.command.spring.kafka.api.Excption.CommandException;
 import com.command.spring.kafka.api.Service.ServiceImpl;
 import com.command.spring.kafka.api.validation.CommandValidation;
 import com.commons.Excption.ValidationException;
+import com.commons.dto.Constants;
 import com.commons.dto.Index;
 import com.commons.dto.Seller;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,13 +25,13 @@ public class SellerController {
     public String addProduct(@RequestBody Seller seller) throws CommandException, ValidationException {
         if (validation.validateSaveProduct(seller))
             service.saveSeller(seller);
-        return "seller data published";
+        return Constants.SELL_PUBLISHED;
     }
 
     @DeleteMapping("/delete")
     public String delete(@RequestParam Integer productId) throws CommandException {
         service.delete(productId);
-        return "Product deleted";
+        return  Constants.PRODUCT_DEL;
     }
 
     @GetMapping("/getAllProduct")

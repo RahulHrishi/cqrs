@@ -1,4 +1,4 @@
-package com.command.spring.kafka.api.rpc;
+package com.command.spring.kafka.api.Service;
 
 import com.commons.dto.Buyer;
 import com.commons.dto.MappedProductModel;

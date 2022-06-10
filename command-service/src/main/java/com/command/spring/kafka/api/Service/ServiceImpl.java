@@ -5,7 +5,6 @@ import com.command.spring.kafka.api.config.Actuator;
 import com.command.spring.kafka.api.config.SequenceGeneratorService;
 import com.command.spring.kafka.api.repository.BuyerRepository;
 import com.command.spring.kafka.api.repository.SellerRepository;
-import com.command.spring.kafka.api.rpc.ConnectQueryService;
 import com.command.spring.kafka.api.validation.CommandValidation;
 import com.commons.Excption.ValidationException;
 import com.commons.dto.Buyer;
@@ -58,7 +57,7 @@ public class ServiceImpl {
     public void saveBuyer(Buyer buyer) throws CommandException {
         actuator.checkHealth();
         Optional<Seller> seller=connectionService.findSellerByProductId(buyer.getProductId());
-        Seller optSeller=seller.orElseThrow(()-> new ValidationException("Product not Found"));
+        Seller optSeller=seller.orElseThrow(()-> new ValidationException(Constants.PRODUCT_NA));
         if(optSeller.getProduct().getEndDate().compareTo(new Date())>0){
             if(!connectionService.findBuyerByProductId(buyer.getProductId(),buyer.getInfo().getEmail()).isPresent()) {
                  buyer.setId((int) sequenceGeneratorService.generateSequence(Buyer.SEQUENCE_NAME));
@@ -66,10 +65,10 @@ public class ServiceImpl {
                 buyerRepository.save(buyer);
                 template.send(Constants.BID_T, buyer);
             }else{
-                throw new ValidationException("BID was already placed by the user");
+                throw new ValidationException(Constants.BID_EXIST);
             }
         }else{
-            throw new ValidationException("BID was expired");
+            throw new ValidationException(Constants.BID_EXPIRED);
         }
     }
 
@@ -77,7 +76,7 @@ public class ServiceImpl {
     public void updateBuyer(Integer productId, String emailId, Integer newBidAmount) throws CommandException, ValidationException {
         actuator.checkHealth();
         Optional<Buyer> optBuyer = connectionService.findBuyerByProductId(productId, emailId);
-        Buyer buyer=optBuyer.orElseThrow(() -> new ValidationException("No such Buyer with Email Id"));
+        Buyer buyer=optBuyer.orElseThrow(() -> new ValidationException(Constants.BUYER_NA));
         buyer.setBidAmount(newBidAmount);
         buyer.getInfo().setEmail(emailId);
         buyerRepository.save(buyer);
@@ -87,13 +86,16 @@ public class ServiceImpl {
     public String delete(Integer productId) throws CommandException {
         actuator.checkHealth();
         Optional<MappedProductModel> optSeller = connectionService.findSellerWithBids(productId);
-        MappedProductModel mappedModel = optSeller.orElseThrow(() -> new ValidationException("seller not found"));
+        MappedProductModel mappedModel = optSeller.orElseThrow(() -> new ValidationException(Constants.SELLER_NA));
+        if(mappedModel.getSeller().getProduct().getEndDate().compareTo(new Date())>0){
+            throw new ValidationException(Constants.BID_EXPIRED_DEL);
+        }
         if (mappedModel.getBuyer().isEmpty()) {
             sellerRepository.delete(mappedModel.getSeller());
             template.send(Constants.SELL_D, mappedModel.getSeller());
-            return "record deleted";
+            return Constants.PRODUCT_DEL;
         }
-        throw new ValidationException("Bid was placed to this product,hence cant delete");
+        throw new ValidationException(Constants.BID_EXIST_DEL);
     }
 
     public Set<Index> getAllProduct() throws CommandException {
