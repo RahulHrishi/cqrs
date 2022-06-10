@@ -50,7 +50,7 @@ public class ServiceImpl {
         actuator.checkHealth();
         seller.setId((int) sequenceGeneratorService.generateSequence(Seller.SEQUENCE_NAME));
         seller.getProduct().setProductId(seller.getId());
-        seller.getInfo().setId(seller.getId());
+        //seller.getInfo().setId(seller.getId());
         sellerRepository.save(seller);
         template.send(Constants.SELL_T, seller);
     }
@@ -61,8 +61,8 @@ public class ServiceImpl {
         Seller optSeller=seller.orElseThrow(()-> new ValidationException("Product not Found"));
         if(optSeller.getProduct().getEndDate().compareTo(new Date())>0){
             if(!connectionService.findBuyerByProductId(buyer.getProductId(),buyer.getInfo().getEmail()).isPresent()) {
-                buyer.setId((int) sequenceGeneratorService.generateSequence(Buyer.SEQUENCE_NAME));
-                buyer.getInfo().setId((int) sequenceGeneratorService.generateSequence(Buyer.SEQUENCE_NAME));
+                 buyer.setId((int) sequenceGeneratorService.generateSequence(Buyer.SEQUENCE_NAME));
+                //buyer.getInfo().setId((int) sequenceGeneratorService.generateSequence(Buyer.SEQUENCE_NAME));
                 buyerRepository.save(buyer);
                 template.send(Constants.BID_T, buyer);
             }else{
@@ -84,12 +84,16 @@ public class ServiceImpl {
         template.send(Constants.BID_T, buyer);
     }
     @Transactional
-    public void delete(Integer productId) throws CommandException {
+    public String delete(Integer productId) throws CommandException {
         actuator.checkHealth();
-        Optional<Seller> optSeller = connectionService.findSellerByProductId(productId);
-        Seller seller=optSeller.orElseThrow(()-> new ValidationException("Product not found"));
-        sellerRepository.delete(seller);
-        template.send(Constants.SELL_D, seller);
+        Optional<MappedProductModel> optSeller = connectionService.findSellerWithBids(productId);
+        MappedProductModel mappedModel = optSeller.orElseThrow(() -> new ValidationException("seller not found"));
+        if (mappedModel.getBuyer().isEmpty()) {
+            sellerRepository.delete(mappedModel.getSeller());
+            template.send(Constants.SELL_D, mappedModel.getSeller());
+            return "record deleted";
+        }
+        throw new ValidationException("Bid was placed to this product,hence cant delete");
     }
 
     public Set<Index> getAllProduct() throws CommandException {

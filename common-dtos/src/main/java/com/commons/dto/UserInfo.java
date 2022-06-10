@@ -9,7 +9,7 @@ import org.springframework.data.annotation.Id;
 @NoArgsConstructor
 public class UserInfo {
 
-    private Integer id;
+   //private Integer id;
     private String first_name;
     private String last_name;
     private Long phone;
