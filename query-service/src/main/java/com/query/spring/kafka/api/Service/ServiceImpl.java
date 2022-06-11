@@ -9,6 +9,8 @@ import com.query.spring.kafka.api.repository.SellerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class ServiceImpl {
     @Autowired
@@ -26,18 +28,23 @@ public class ServiceImpl {
         buyerRepository.save(buyer);
     }
 
-    public MappedProductModel findByProduct(Integer productId) throws QueryException {
+    public Optional<MappedProductModel> findSellerWithBids(Integer productId) throws QueryException {
         MappedProductModel obj = new MappedProductModel();
         obj.setSeller(sellerRepository.findByProductId(productId));
-        obj.setBuyer(buyerRepository.findByProductId(productId));
-        return obj;
+        obj.setBuyer(buyerRepository.findByProductIdOrderByBidAmountDesc(productId));
+        return Optional.of(obj);
     }
 
-    public Seller getProductDetails (Integer productId) throws QueryException {
-        return sellerRepository.findByProductId(productId);
+    public Optional<Seller> getSellerByProductId(Integer productId) throws QueryException {
+        return Optional.ofNullable(sellerRepository.findByProductId(productId));
     }
 
-    public void delete(Seller seller) throws QueryException{
+    public void delete(Seller seller) throws QueryException {
         sellerRepository.delete(seller);
     }
+
+    public Optional<Buyer> getBuyerByIdAndEmail(Integer productId, String email) throws QueryException {
+        return buyerRepository.findByProductIdOrderByBidAmountDesc(productId).stream().filter(bean -> bean.getInfo().getEmail().equals(email)).findFirst();
+    }
+
 }
