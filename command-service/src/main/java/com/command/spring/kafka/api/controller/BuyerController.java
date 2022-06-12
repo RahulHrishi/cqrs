@@ -29,7 +29,7 @@ public class BuyerController {
 
     @PostMapping("/update-bid/{productId}/{emailId}/{newBidAmount}")
     public String updateBid(@RequestParam("productId") Integer productId, @RequestParam("emailId") String emailId, @RequestParam("newBidAmount") Integer newBidAmount) throws CommandException, ValidationException {
-        service.updateBuyer(productId, emailId, newBidAmount);
+        service.updateBid(productId, emailId, newBidAmount);
         return Constants.BIDDER_UPDATED;
     }
 }

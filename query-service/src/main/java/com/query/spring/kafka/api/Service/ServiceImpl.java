@@ -19,7 +19,6 @@ public class ServiceImpl {
     @Autowired
     private SellerRepository sellerRepository;
 
-
     public void consumeSeller(Seller seller) throws QueryException {
         sellerRepository.save(seller);
     }

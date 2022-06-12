@@ -29,8 +29,8 @@ public class SellerController {
     }
 
     @DeleteMapping("/delete")
-    public String delete(@RequestParam Integer productId) throws CommandException {
-        service.delete(productId);
+    public String deleteProduct (@RequestParam Integer productId) throws CommandException {
+        service.deleteProduct(productId);
         return  Constants.PRODUCT_DEL;
     }
 
