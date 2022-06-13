@@ -11,11 +11,11 @@ public class Constants {
 
     public static final String SELL_D = "SELL-DEL";
 
-    public static final String BIDDER_PUBLISHED = "bidder data published";
+    public static final String BIDDER_PUBLISHED = "Bidder data published";
 
-    public static final String BIDDER_UPDATED = "bidder data updated";
+    public static final String BIDDER_UPDATED = "Bidder data updated";
 
-    public static final String SELL_PUBLISHED = "seller data published";
+    public static final String SELL_PUBLISHED = "Seller data published";
 
     public static final String PRODUCT_DEL = "Product deleted";
 
@@ -27,7 +27,7 @@ public class Constants {
 
     public static final String BUYER_NA = "No such Buyer with this Email Id";
 
-    public static final String SELLER_NA = "seller not found";
+    public static final String SELLER_NA = "Seller not found";
 
     public static final String AUCTION_EXPIRED_BID_UPDATE = "Bid end date was over, hence can't update Bid amount";
 
