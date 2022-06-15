@@ -91,7 +91,9 @@ public class ServiceImpl {
     public String deleteProduct (Integer productId) throws CommandException {
         actuator.checkHealth();
         Optional<MappedProductModel> optSeller = connectionService.findSellerWithBids(productId);
-        MappedProductModel mappedModel = optSeller.orElseThrow(() -> new ValidationException(Constants.SELLER_NA));
+        if(null==optSeller.get().getSeller())
+            throw new ValidationException(Constants.SELLER_NA);
+        MappedProductModel mappedModel = optSeller.get();
         if(mappedModel.getSeller().getProduct().getEndDate().compareTo(new Date())>0){
             throw new ValidationException(Constants.Auction_EXPIRED_DEL);
         }
