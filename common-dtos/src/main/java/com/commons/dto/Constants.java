@@ -1,5 +1,8 @@
 package com.commons.dto;
 
+import com.commons.Excption.ValidationException;
+import org.apache.commons.lang3.StringUtils;
+
 public class Constants {
     public static final String SELL_T = "AUCTION-SELL";
 
@@ -46,4 +49,23 @@ public class Constants {
     public static final String PRODUCT_NAME_MAX_LENGTH = "Product name length maximum 30 char allowed.";
 
     public static final String PRODUCT_CATEGORY_INVALID = "Product category in not valid one.";
+
+    public static final String NAME_BLANK = "First Name can not be blank.";
+
+    public static final String NAME_MIN_LENGTH = "First name length minimum 5 char required.";
+
+    public static final String NAME_MAX_LENGTH = "First name length maximum 30 char allowed.";
+
+    public static final String LAST_NAME_NULL = "Last Name can not be null.";
+
+    public static final String LAST_NAME_MIN_LENGTH = "Last name length minimum 3 char required.";
+
+    public static final String LAST_NAME_MAX_LENGTH = "Last name length maximum 25 char allowed.";
+
+    public static final String INVALID_MAIL_ID = "Mail Id is not a valid one.";
+
+    public static final String PHONE_MIN_LENGTH = "Phone number should be 10 digit.";
+
+    public static final String PHONE_MAX_LENGTH = "Phone number should not be more than 10 digit.";
+
 }
