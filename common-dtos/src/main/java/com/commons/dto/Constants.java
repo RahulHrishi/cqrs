@@ -36,4 +36,14 @@ public class Constants {
     public static final String BID_EXIST_DEL = "Bid was placed to this product,hence can't delete";
 
     public static final String BID_EXPIRED_DEL = "Bid was expired,hence can't delete";
+
+    public static final String BID_END_DATE = "Bid end date should be a future date.";
+
+    public static final String PRODUCT_NAME_BLANK = "Product Name can not be blank.";
+
+    public static final String PRODUCT_NAME_MIN_LENGTH = "Product name length minimum 5 char required.";
+
+    public static final String PRODUCT_NAME_MAX_LENGTH = "Product name length maximum 30 char allowed.";
+
+    public static final String PRODUCT_CATEGORY_INVALID = "Product category in not valid one.";
 }
