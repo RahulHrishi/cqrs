@@ -11,6 +11,7 @@ import com.commons.dto.Buyer;
 import com.commons.dto.Constants;
 import com.commons.dto.Seller;
 import com.commons.dto.*;
+import com.commons.logger.AuctionLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
@@ -47,20 +48,28 @@ public class ServiceImpl {
 
     @Transactional
     public void saveSeller (Seller seller) throws CommandException {
+
+        String method = "saveSeller";
         actuator.checkHealth();
+
         seller.setId((int) sequenceGeneratorService.generateSequence(Seller.SEQUENCE_NAME));
         seller.getProduct().setProductId(seller.getId());
+        AuctionLogger.infoLog(this.getClass(), method, "Creating Seller: "+seller.getId());
         sellerRepository.save(seller);
         template.send(Constants.SELL_T, seller);
     }
     @Transactional
     public void saveBuyer (Buyer buyer) throws CommandException {
+
+        String method = "saveBuyer";
         actuator.checkHealth();
+
         Optional<Seller> seller=connectionService.findSellerByProductId(buyer.getProductId());
         Seller optSeller=seller.orElseThrow(()-> new ValidationException(Constants.PRODUCT_NA));
         if(optSeller.getProduct().getEndDate().compareTo(new Date())>0){
             if(!connectionService.findBuyerByProductId(buyer.getProductId(),buyer.getInfo().getEmail()).isPresent()) {
-                 buyer.setId((int) sequenceGeneratorService.generateSequence(Buyer.SEQUENCE_NAME));
+                buyer.setId((int) sequenceGeneratorService.generateSequence(Buyer.SEQUENCE_NAME));
+                AuctionLogger.infoLog(this.getClass(), method, "Creating Buyer: "+buyer.getId());
                 buyerRepository.save(buyer);
                 template.send(Constants.BID_T, buyer);
             }else{
@@ -73,13 +82,17 @@ public class ServiceImpl {
 
     @Transactional
     public void updateBid (Integer productId, String emailId, Integer newBidAmount) throws CommandException, ValidationException {
+
+        String method = "updateBid";
         actuator.checkHealth();
+
         Optional<Buyer> optBuyer = connectionService.findBuyerByProductId(productId, emailId);
         Buyer buyer=optBuyer.orElseThrow(() -> new ValidationException(Constants.BUYER_NA));
         Optional<Seller> optSeller = connectionService.findSellerByProductId(buyer.getProductId());
         Product product = optSeller.get().getProduct();
         if (product.getEndDate().compareTo(new Date())<0) {
             buyer.setBidAmount(newBidAmount);
+            AuctionLogger.infoLog(this.getClass(), method, "Updating Bid Amount: "+newBidAmount);
             buyerRepository.save(buyer);
         } else {
             throw new ValidationException(Constants.AUCTION_EXPIRED_BID_UPDATE);
@@ -89,7 +102,10 @@ public class ServiceImpl {
 
     @Transactional
     public String deleteProduct (Integer productId) throws CommandException {
+
+        String method = "deleteProduct";
         actuator.checkHealth();
+
         Optional<MappedProductModel> optSeller = connectionService.findSellerWithBids(productId);
         if(null==optSeller.get().getSeller())
             throw new ValidationException(Constants.SELLER_NA);
@@ -98,6 +114,7 @@ public class ServiceImpl {
             throw new ValidationException(Constants.Auction_EXPIRED_DEL);
         }
         if (mappedModel.getBuyer().isEmpty()) {
+            AuctionLogger.infoLog(this.getClass(), method, "deleting Product: "+productId);
             sellerRepository.delete(mappedModel.getSeller());
             template.send(Constants.SELL_D, mappedModel.getSeller());
             return Constants.PRODUCT_DEL;
@@ -107,11 +124,15 @@ public class ServiceImpl {
     }
 
     public Set<Index> getAllProduct() throws CommandException {
+
+        String method = "getAllProduct";
         actuator.checkHealth();
+
         Set<Index> indexList = new HashSet<>();
         sellerRepository.findAll().stream().map(bean -> bean.getProduct()).collect(Collectors.toList())
                 .forEach(prod -> { indexList.add(new Index(prod.getProductId(), prod.getProductName()));
         });
+        AuctionLogger.infoLog(this.getClass(), method, "Fetching total: "+indexList.size()+ " Products.");
         return indexList;
     }
 }
