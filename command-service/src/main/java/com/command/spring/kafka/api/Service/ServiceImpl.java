@@ -54,8 +54,8 @@ public class ServiceImpl {
 
         seller.setId((int) sequenceGeneratorService.generateSequence(Seller.SEQUENCE_NAME));
         seller.getProduct().setProductId(seller.getId());
-        AuctionLogger.infoLog(this.getClass(), method, "Creating Seller: "+seller.getId());
         sellerRepository.save(seller);
+        AuctionLogger.infoLog(this.getClass(), method, "Created Seller: "+seller.getId());
         template.send(Constants.SELL_T, seller);
     }
     @Transactional
@@ -69,8 +69,8 @@ public class ServiceImpl {
         if(optSeller.getProduct().getEndDate().compareTo(new Date())>0){
             if(!connectionService.findBuyerByProductId(buyer.getProductId(),buyer.getInfo().getEmail()).isPresent()) {
                 buyer.setId((int) sequenceGeneratorService.generateSequence(Buyer.SEQUENCE_NAME));
-                AuctionLogger.infoLog(this.getClass(), method, "Creating Buyer: "+buyer.getId());
                 buyerRepository.save(buyer);
+                AuctionLogger.infoLog(this.getClass(), method, "Created Buyer: "+buyer.getId());
                 template.send(Constants.BID_T, buyer);
             }else{
                 throw new ValidationException(Constants.BID_EXIST);
@@ -92,8 +92,8 @@ public class ServiceImpl {
         Product product = optSeller.get().getProduct();
         if (product.getEndDate().compareTo(new Date())<0) {
             buyer.setBidAmount(newBidAmount);
-            AuctionLogger.infoLog(this.getClass(), method, "Updating Bid Amount: "+newBidAmount);
             buyerRepository.save(buyer);
+            AuctionLogger.infoLog(this.getClass(), method, "Updated Bid Amount: "+newBidAmount);
         } else {
             throw new ValidationException(Constants.AUCTION_EXPIRED_BID_UPDATE);
         }
@@ -114,8 +114,8 @@ public class ServiceImpl {
             throw new ValidationException(Constants.Auction_EXPIRED_DEL);
         }
         if (mappedModel.getBuyer().isEmpty()) {
-            AuctionLogger.infoLog(this.getClass(), method, "deleting Product: "+productId);
             sellerRepository.delete(mappedModel.getSeller());
+            AuctionLogger.infoLog(this.getClass(), method, "deleted Product: "+productId);
             template.send(Constants.SELL_D, mappedModel.getSeller());
             return Constants.PRODUCT_DEL;
         } else {
