@@ -1,7 +1,5 @@
 package com.commons.logger;
 
-import com.commons.dto.Test;
-
 import java.util.logging.Logger;
 
 
